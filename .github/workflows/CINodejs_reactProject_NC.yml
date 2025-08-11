@@ -1,0 +1,36 @@
+name: Node.js CI_Non-containerization
+on:
+  workflow_dispatch
+jobs:
+  CI_Non-conterization_build:
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Checkout code
+        uses: actions/checkout@v4.2.2
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3.9.1 
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: npm install
+        working-directory: react
+      - name: Run tests
+        run: npm test
+        working-directory: react 
+      - name: Lint code
+        run: npm run lint
+        working-directory: react
+      - name: Show current directory
+        run: pwd
+      - name: Package app
+        run: |
+          mkdir staging
+          cp react/*.tgz staging || echo "No .tgz found"
+          cp react/dist/* staging || echo "No dist folder found"
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: Package
+          path: staging
+
+
